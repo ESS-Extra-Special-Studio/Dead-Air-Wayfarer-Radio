@@ -50,7 +50,7 @@ public class Dead_air_wayfarer_radio {
     private void onRegister(RegisterEvent event) {
         event.register(Registries.SOUND_EVENT, registry -> {
             for (String slug : TRACK_SLUGS) {
-                ResourceLocation id = ResourceLocation.fromNamespaceAndPath(MODID, "music." + slug);
+                ResourceLocation id = new ResourceLocation(MODID, "music." + slug);
                 registry.register(id, SoundEvent.createVariableRangeEvent(id));
             }
         });
