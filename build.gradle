@@ -205,3 +205,24 @@ tasks.named('jar', Jar).configure {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+
+jar {
+    archiveFileName = "${mod_id}-${version}+${minecraft_version}-forge.jar"
+}
+
+tasks.register('copyToSmokePack') {
+    dependsOn 'jar'
+    doLast {
+        def dest = file("${System.getProperty('user.home')}/curseforge/minecraft/Instances/ESS SMK DA 1.20.4-forge/mods")
+        if (!dest.exists()) {
+            println "Smoke pack mods folder not found: ${dest}"
+            return
+        }
+        def built = tasks.jar.archiveFile.get().asFile
+        dest.listFiles()?.findAll { it.name.startsWith("${mod_id}-") && it.name.endsWith('.jar') }?.each { it.delete() }
+        copy { from built; into dest }
+        println "Copied ${built.name} -> ${dest}"
+    }
+}
+tasks.named('build').configure { finalizedBy 'copyToSmokePack' }
